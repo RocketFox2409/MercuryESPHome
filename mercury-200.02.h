@@ -64,36 +64,18 @@ double readDouble(uchar *inp, int del) {
 
 
   void setup() override {
-    this -> set_update_interval(30000); // Периуд обновления сенсора 
+    this -> set_update_interval(120000); // Периуд обновления сенсора 
   }
 
 void loop() override {
 }
 
 
-// byte* sends(byte *IN, int IN1) {
-
-//   write_array(IN, IN1);
-
-//   delay(20);
-
-//   while (available()) { // Читение и запись данных из UART
-//     Re_buf[counter]=read();
-//     counter++;
-//   }
-
-//   delay(20);
-
-//   counter = 0;
-  
-// }
-
-
   void update() override {
 
   write_array(tarif, sizeof(tarif));
 
-  delay(20);
+  delay(30);
 
     while (available()) { // Читение и запись данных из UART
       Re_buf[counter]=read();
@@ -101,30 +83,19 @@ void loop() override {
       counter++;
     }
 
-    delay(30);
+    delay(100);
 
     write_array(electrical_parameters, sizeof(electrical_parameters));
 
-    delay(20);
+    delay(30);
 
     while (available()) { // Читение и запись данных из UART
       Re_buf[counter]=read();
-      // ESP_LOGD("main", "valve: %d", Re_buf[counter]);
+
       counter++;
     }
 
     counter = 0;
-
-  
-  // sends(electrical_parameters, sizeof(electrical_parameters));
-
-  // if(Re_buf[0] == 0x00 && Re_buf[4] == 0x63) {
-
-  //     V = readDouble(&Re_buf[5], 10); // Парсинг байтов и перевод в нормальные значения
-  //     A = readDouble(&Re_buf[7], 100); // Парсинг байтов и перевод в нормальные значения
-  //     W = readDouble<3>(&Re_buf[9], 1000); // Парсинг байтов и перевод в нормальные значения
-
-  //   }
 
   if(Re_buf[0] == 0x00 && Re_buf[27] == 0x63) {
 
@@ -133,8 +104,6 @@ void loop() override {
     W = readDouble<3>(&Re_buf[32], 1000); // Парсинг байтов и перевод в нормальные значения
 
   }
-
-  // sends(tarif, sizeof(tarif));
 
   if ( Re_buf[0] == 0x00 && Re_buf[4] == 0x27 ) {
 
