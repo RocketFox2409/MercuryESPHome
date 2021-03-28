@@ -13,5 +13,10 @@
 Схема подключение к esp
 
 ![](https://github.com/RocketFox2409/MercuryESPHome/blob/main/examples/cxema.png)
+Распиновка на счетчике:
+1-GHD
+2-A
+3-B
+4-+5
 ![](https://github.com/RocketFox2409/MercuryESPHome/blob/main/examples/RS485.png)
 ![](https://github.com/RocketFox2409/MercuryESPHome/blob/main/examples/RS485-2.png)
