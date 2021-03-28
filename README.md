@@ -12,4 +12,4 @@
 
 Схема подключение к esp
 
-![](examples\RS485-2.jpg)
+![](examples\RS485.jpg)
