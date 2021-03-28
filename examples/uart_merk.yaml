@@ -1,3 +1,8 @@
+esphome:
+  includes:
+    - common/custom/mercury/mercury-200.02.h #Указываем свой путь до файла
+
+
 logger:
   level: VERY_VERBOSE
   baud_rate: 0
