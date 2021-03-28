@@ -13,3 +13,4 @@
 Схема подключение к esp
 
 ![](https://github.com/RocketFox2409/MercuryESPHome/blob/main/examples/RS485.jpg)
+![](https://github.com/RocketFox2409/MercuryESPHome/blob/main/examples/RS485-2.jpg)
