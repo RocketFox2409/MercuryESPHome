@@ -10,29 +10,19 @@ class Mercury : public PollingComponent, public UARTDevice {
   Sensor *Tariff2 {nullptr};
   Sensor *Sum_Tariff {nullptr};
 
+  int seriall = 420095;  // сюда свой серийный номер счетчика
+
   public:
     Mercury(UARTComponent *parent, Sensor *sensor1, Sensor *sensor2, Sensor *sensor3, Sensor *sensor4, Sensor *sensor5, Sensor *sensor6) : UARTDevice(parent) , Volts(sensor1) , Amps(sensor2) , Watts(sensor3), Tariff1(sensor4), Tariff2(sensor5), Sum_Tariff(sensor6) {}
 
-/*
-  Разбор запроса 
-  Например
-  0x00, 0x06, 0x68, 0xff, 0x63, 0xA4, 0x8D
-  0x00 - Стартовый байт
-  0x06, 0x68, 0xff - Адрес счетчика в HEX (3 байта) на меркурий 200.02 последние 6 цифр
-  0x63 - Запрос (63 - мгновенные значения)
-  0xA4, 0x8D - CRC16 (Modbus)  Рассчитовал на этом сайте https://www.lammertbies.nl/comm/info/crc-calculation
-  Сумма байтов 0x00, 0x06, 0x68, 0xff, 0x63 ответ сдвигается (на сайте 0x8DA4 нужно 0xA4 0x8D)
-
-  https://www.incotexcom.ru/files/em/docs/mercury-protocol-obmena-1.pdf - Протокол обмена однофазных счетчиков Меркурий 200, 201, 203 (кроме Меркурий 203.2TD), 206
-*/
-
-  byte electrical_parameters[7] = {  0x00, 0x06, 0x68, 0xff, 0x63, 0xA4, 0x8D  }; // Байты на получене мгновенных значений
-  byte tarif[7] = {  0x00, 0x06, 0x68, 0xff, 0x27, 0xA4, 0xBE  }; // Байты на получение тариффа
+  unsigned char electrical_parameters[7]; // Байты на получене мгновенных значений
+  unsigned char tarif[7]; // Байты на получение тариффа
 
   byte Re_buf[100];
   int counter=0;
   double V, A, W;
   double T1, T2, sum;
+  
 
 ////////////////////// 
 typedef unsigned char uchar;
@@ -62,9 +52,38 @@ double readDouble(uchar *inp, int del) {
 }
 //////////////////////
 
+uint16_t crc16(const uint8_t *data, uint8_t len) {
+  uint16_t crc = 0xFFFF;
+  while (len--) {
+    crc ^= *data++;
+    for (uint8_t i = 0; i < 8; i++) {
+      if ((crc & 0x01) != 0) {
+        crc >>= 1;
+        crc ^= 0xA001;
+      } else {
+        crc >>= 1;
+      }
+    }
+  }
+  return crc;
+}
+
+void calculateParams(unsigned char* frame, uint32_t serial_, unsigned char comm) {
+  frame[0] = 0x00;
+  frame[1] = serial_ >> 16;
+  frame[2] = serial_ >> 8;
+  frame[3] = serial_;
+  frame[4] = comm;
+  auto crc = crc16(frame, 5);
+  frame[5] = crc >> 0;
+  frame[6] = crc >> 8;
+  }
+
 
   void setup() override {
-    this -> set_update_interval(120000); // Периуд обновления сенсора 
+    this -> set_update_interval(120000); // Периуд обновления сенсора
+    calculateParams(electrical_parameters, seriall, 0x63);
+    calculateParams(tarif, seriall, 0x27);
   }
 
 void loop() override {
