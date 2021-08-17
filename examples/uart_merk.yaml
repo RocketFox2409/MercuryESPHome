@@ -56,6 +56,14 @@ sensor:
     lambda: "return {};"
 
   - platform: template
+    id: Tariff3
+    name: "${friendly_name} Tariff3"
+    icon: "mdi:counter"
+    unit_of_measurement: "KWt"
+    accuracy_decimals: 2
+    lambda: "return {};"
+
+  - platform: template
     id: Sum_Tariff
     name: "${friendly_name} Sum_Tariff"
     icon: "mdi:counter"
@@ -66,6 +74,6 @@ sensor:
 custom_component: 
 
   - lambda: |-
-      auto my_mercury = new Mercury(id(uart_bus), id(Volts), id(Amps), id(Watts), id(Tariff1), id(Tariff2), id(Sum_Tariff));
+      auto my_mercury = new Mercury(id(uart_bus), id(Volts), id(Amps), id(Watts), id(Tariff1), id(Tariff2), id(Tariff3), id(Sum_Tariff));
       App.register_component(my_mercury);
       return {my_mercury};

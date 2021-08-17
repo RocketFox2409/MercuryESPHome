@@ -8,12 +8,13 @@ class Mercury : public PollingComponent, public UARTDevice {
   Sensor *Watts {nullptr};
   Sensor *Tariff1 {nullptr};
   Sensor *Tariff2 {nullptr};
+  Sensor *Tariff3 {nullptr};
   Sensor *Sum_Tariff {nullptr};
 
   int seriall = 420095;  // сюда свой серийный номер счетчика
 
   public:
-    Mercury(UARTComponent *parent, Sensor *sensor1, Sensor *sensor2, Sensor *sensor3, Sensor *sensor4, Sensor *sensor5, Sensor *sensor6) : UARTDevice(parent) , Volts(sensor1) , Amps(sensor2) , Watts(sensor3), Tariff1(sensor4), Tariff2(sensor5), Sum_Tariff(sensor6) {}
+    Mercury(UARTComponent *parent, Sensor *sensor1, Sensor *sensor2, Sensor *sensor3, Sensor *sensor4, Sensor *sensor5, Sensor *sensor6, Sensor *sensor7) : UARTDevice(parent) , Volts(sensor1) , Amps(sensor2) , Watts(sensor3), Tariff1(sensor4), Tariff2(sensor5), Tariff3(sensor6), Sum_Tariff(sensor7) {}
 
   unsigned char electrical_parameters[7]; // Байты на получене мгновенных значений
   unsigned char tarif[7]; // Байты на получение тариффа
@@ -123,7 +124,8 @@ void main_uart_read (byte *command) {
 
     T1 = readDouble<4>(&Re_buf[5], 100);
     T2 = readDouble<4>(&Re_buf[9], 100);
-    sum = T1 + T2;
+    T3 = readDouble<4>(&Re_buf[13], 100);
+    sum = T1 + T2 + T3;
 
   }
 
@@ -132,6 +134,7 @@ void main_uart_read (byte *command) {
     if (Watts != nullptr) Watts -> publish_state(W);
     if (Tariff1 != nullptr) Tariff1 -> publish_state(T1);
     if (Tariff2 != nullptr) Tariff2 -> publish_state(T2);
+    if (Tariff3 != nullptr) Tariff3 -> publish_state(T3);
     if (Sum_Tariff != nullptr) Sum_Tariff -> publish_state(sum);
 
   };
