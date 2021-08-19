@@ -22,7 +22,7 @@ class Mercury : public PollingComponent, public UARTDevice {
   byte Re_buf[100];
   int counter=0;
   double V, A, W;
-  double T1, T2, sum;
+  double T1, T2, T3, sum;
   
 
 ////////////////////// 
